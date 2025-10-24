@@ -13,10 +13,9 @@
       justify-content: flex-start;
       background-color: #121212;
       color: #fff;
-      min-height: 100vh;
+      height: 100vh;
       margin: 0;
       padding-top: 40px;
-      text-align: center;
     }
 
     h1 {
@@ -36,8 +35,8 @@
     }
 
     #puzzle-container {
-      width: 360px;
-      height: 360px;
+      width: 340px;
+      height: 340px;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(3, 1fr);
@@ -51,7 +50,7 @@
 
     .piece {
       background-image: url("puzzle.png");
-      background-size: 360px 360px;
+      background-size: 340px 340px;
       width: 100%;
       height: 100%;
       cursor: grab;
@@ -111,7 +110,7 @@
       border: 2px solid #ffcb77;
       border-radius: 10px;
       width: 90%;
-      max-width: 900px;
+      max-width: 1000px;
       text-align: center;
       box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
       position: relative;
@@ -127,10 +126,6 @@
       cursor: pointer;
     }
 
-    .close:hover {
-      color: #ffe299;
-    }
-
     .slides {
       display: none;
       align-items: center;
@@ -144,25 +139,13 @@
     }
 
     .slide-image {
-      width: 300px;
-      height: 300px;
+      width: 250px;
+      height: 250px;
       background-color: #333;
       border-radius: 8px;
       background-size: cover;
       background-position: center;
       flex-shrink: 0;
-    }
-
-    @media (max-width: 600px) {
-      #puzzle-container {
-        width: 300px;
-        height: 300px;
-      }
-
-      .slide-image {
-        width: 250px;
-        height: 250px;
-      }
     }
 
     .slide-text {
@@ -173,7 +156,7 @@
     .slide-text h3 {
       margin: 0 0 10px;
       color: #ffcb77;
-      font-size: 1.3em;
+      font-size: 1.4em;
     }
 
     .slide-text p {
@@ -187,7 +170,6 @@
       display: flex;
       justify-content: center;
       gap: 15px;
-      flex-wrap: wrap;
     }
 
     .nav-btns button {
@@ -215,14 +197,15 @@
   <div id="puzzle-container"></div>
   <div id="message"></div>
   <button id="shuffle-btn">Shuffle Pieces</button>
-  <button id="version2-btn">Version 2</button>
+  <button id="version-btn">Switch to Version 2</button>
 
-  <!-- Modal for Version 1 -->
-  <div id="completionModal" class="modal">
+  <!-- Modal Version 1 -->
+  <div id="completionModal1" class="modal">
     <div class="modal-content">
       <span class="close">&times;</span>
       <h2>Development Complete!</h2>
 
+      <!-- Slides -->
       <div class="slides active">
         <div class="slide-image" style="background-image:url('slide1.png');"></div>
         <div class="slide-text">
@@ -270,58 +253,27 @@
     </div>
   </div>
 
-  <!-- Modal for Version 2 -->
+  <!-- Modal Version 2 -->
   <div id="completionModal2" class="modal">
     <div class="modal-content">
-      <span class="close">&times;</span>
-      <h2>Version 2 Complete!</h2>
+      <span class="close close2">&times;</span>
+      <h2>Development Complete (Version 2)!</h2>
 
-      <div class="slides2 active">
+      <div class="slides active">
         <div class="slide-text">
-          <h3>Innovation & Technology</h3>
-          <p>Innovation fuels progress, enabling efficiency and creativity across sectors for a brighter, tech-empowered nation.</p>
+          <h3>Inclusive Growth</h3>
+          <p>Progress that benefits everyone, leaving no one behind.</p>
         </div>
       </div>
-
-      <div class="slides2">
-        <div class="slide-text">
-          <h3>Infrastructure & Connectivity</h3>
-          <p>Reliable infrastructure and connectivity bridge communities, creating opportunities and fostering national unity.</p>
-        </div>
-      </div>
-
-      <div class="slides2">
-        <div class="slide-text">
-          <h3>Governance & Leadership</h3>
-          <p>Transparent, accountable, and visionary leadership drives equitable policies and long-term stability.</p>
-        </div>
-      </div>
-
-      <div class="slides2">
-        <div class="slide-text">
-          <h3>Culture & Identity</h3>
-          <p>Our diverse culture binds us together, inspiring pride and resilience in every Filipino heart.</p>
-        </div>
-      </div>
-
-      <div class="slides2">
-        <div class="slide-text">
-          <h3>Peace & Justice</h3>
-          <p>Social harmony and equal justice uphold the dignity of every person and sustain inclusive progress.</p>
-        </div>
-      </div>
-
-      <div class="slides2">
-        <div class="slide-text">
-          <h3>Global Cooperation</h3>
-          <p>Collaboration with other nations amplifies growth and strengthens our role in global development efforts.</p>
-        </div>
-      </div>
+      <div class="slides"><div class="slide-text"><h3>Innovation</h3><p>Technology and creativity drive modern development.</p></div></div>
+      <div class="slides"><div class="slide-text"><h3>Good Governance</h3><p>Transparency and accountability sustain public trust.</p></div></div>
+      <div class="slides"><div class="slide-text"><h3>Community Empowerment</h3><p>Empowered citizens shape stronger, self-reliant communities.</p></div></div>
+      <div class="slides"><div class="slide-text"><h3>Peace & Justice</h3><p>Lasting peace allows growth to flourish.</p></div></div>
+      <div class="slides"><div class="slide-text"><h3>Culture & Identity</h3><p>Preserving heritage while embracing progress defines our strength.</p></div></div>
 
       <div class="nav-btns">
         <button id="prevSlide2">Previous</button>
         <button id="nextSlide2">Next</button>
-        <button id="backToMain">Back to Main Puzzle</button>
       </div>
     </div>
   </div>
@@ -330,29 +282,20 @@
   const container = document.getElementById("puzzle-container");
   const message = document.getElementById("message");
   const shuffleBtn = document.getElementById("shuffle-btn");
-  const version2Btn = document.getElementById("version2-btn");
-  const modal1 = document.getElementById("completionModal");
+  const versionBtn = document.getElementById("version-btn");
+  const modal1 = document.getElementById("completionModal1");
   const modal2 = document.getElementById("completionModal2");
-  const closeButtons = document.querySelectorAll(".close");
+  const closeModal1 = document.querySelector(".close");
+  const closeModal2 = document.querySelector(".close2");
 
-  const slides1 = document.querySelectorAll(".slides");
-  const slides2 = document.querySelectorAll(".slides2");
-  const nextSlide = document.getElementById("nextSlide");
-  const prevSlide = document.getElementById("prevSlide");
-  const nextSlide2 = document.getElementById("nextSlide2");
-  const prevSlide2 = document.getElementById("prevSlide2");
-  const backToMain = document.getElementById("backToMain");
-
-  let currentSlide1 = 0;
-  let currentSlide2 = 0;
+  let version = 1;
   const gridSize = 3;
   let pieces = [];
-  let version = 1;
+  let slides1, slides2, currentSlide1 = 0, currentSlide2 = 0;
 
-  function createPuzzle() {
+  function createPuzzle(image = "puzzle.png") {
     container.innerHTML = "";
     pieces = [];
-    const img = version === 1 ? "puzzle.png" : "puzzle2.png";
 
     for (let row = 0; row < gridSize; row++) {
       for (let col = 0; col < gridSize; col++) {
@@ -362,9 +305,9 @@
         piece.draggable = true;
         piece.dataset.correct = correctIndex;
         piece.dataset.current = correctIndex;
-        piece.style.backgroundImage = `url('${img}')`;
-        piece.style.backgroundSize = "360px 360px";
-        piece.style.backgroundPosition = `${-col * 120}px ${-row * 120}px`;
+        piece.style.backgroundImage = `url('${image}')`;
+        piece.style.backgroundPosition = `${-col * 113}px ${-row * 113}px`;
+        piece.style.backgroundSize = "340px 340px";
         pieces.push(piece);
       }
     }
@@ -421,12 +364,10 @@
         dragged = piece;
         piece.style.opacity = "0.4";
       });
-
       piece.addEventListener("touchend", e => {
         piece.style.opacity = "1";
         const touch = e.changedTouches[0];
         const target = document.elementFromPoint(touch.clientX, touch.clientY);
-
         if (target && target.classList.contains("piece") && target !== dragged) {
           const temp = dragged.dataset.current;
           dragged.dataset.current = target.dataset.current;
@@ -434,11 +375,8 @@
           renderPieces();
           checkWin();
         }
-
         dragged = null;
       });
-
-      piece.addEventListener("touchmove", e => e.preventDefault());
     });
   }
 
@@ -448,38 +386,59 @@
       message.textContent = "Development Complete!";
       if (version === 1) modal1.style.display = "block";
       else modal2.style.display = "block";
+    } else {
+      message.textContent = "";
     }
   }
 
-  // Modal controls
-  closeButtons.forEach(btn => btn.addEventListener("click", () => btn.parentElement.parentElement.style.display = "none"));
-  window.addEventListener("click", e => {
-    if (e.target.classList.contains("modal")) e.target.style.display = "none";
-  });
+  // Slide Navigation
+  function setupSlides() {
+    slides1 = modal1.querySelectorAll(".slides");
+    slides2 = modal2.querySelectorAll(".slides");
 
-  // Slide navigation
-  function showSlide(slides, index) {
-    slides.forEach((s, i) => s.classList.toggle("active", i === index));
+    document.getElementById("nextSlide").onclick = () => {
+      slides1[currentSlide1].classList.remove("active");
+      currentSlide1 = (currentSlide1 + 1) % slides1.length;
+      slides1[currentSlide1].classList.add("active");
+    };
+
+    document.getElementById("prevSlide").onclick = () => {
+      slides1[currentSlide1].classList.remove("active");
+      currentSlide1 = (currentSlide1 - 1 + slides1.length) % slides1.length;
+      slides1[currentSlide1].classList.add("active");
+    };
+
+    document.getElementById("nextSlide2").onclick = () => {
+      slides2[currentSlide2].classList.remove("active");
+      currentSlide2 = (currentSlide2 + 1) % slides2.length;
+      slides2[currentSlide2].classList.add("active");
+    };
+
+    document.getElementById("prevSlide2").onclick = () => {
+      slides2[currentSlide2].classList.remove("active");
+      currentSlide2 = (currentSlide2 - 1 + slides2.length) % slides2.length;
+      slides2[currentSlide2].classList.add("active");
+    };
   }
 
-  nextSlide.addEventListener("click", () => showSlide(slides1, (currentSlide1 = (currentSlide1 + 1) % slides1.length)));
-  prevSlide.addEventListener("click", () => showSlide(slides1, (currentSlide1 = (currentSlide1 - 1 + slides1.length) % slides1.length)));
-  nextSlide2.addEventListener("click", () => showSlide(slides2, (currentSlide2 = (currentSlide2 + 1) % slides2.length)));
-  prevSlide2.addEventListener("click", () => showSlide(slides2, (currentSlide2 = (currentSlide2 - 1 + slides2.length) % slides2.length)));
+  closeModal1.onclick = () => modal1.style.display = "none";
+  closeModal2.onclick = () => modal2.style.display = "none";
 
-  backToMain.addEventListener("click", () => {
-    modal2.style.display = "none";
-    version = 1;
-    createPuzzle();
-  });
+  versionBtn.onclick = () => {
+    if (version === 1) {
+      version = 2;
+      versionBtn.textContent = "Switch to Version 1";
+      createPuzzle("puzzle2.png");
+    } else {
+      version = 1;
+      versionBtn.textContent = "Switch to Version 2";
+      createPuzzle("puzzle.png");
+    }
+  };
 
-  version2Btn.addEventListener("click", () => {
-    version = 2;
-    createPuzzle();
-  });
-
-  shuffleBtn.addEventListener("click", shufflePieces);
+  shuffleBtn.onclick = shufflePieces;
   createPuzzle();
+  setupSlides();
   </script>
 </body>
 </html>

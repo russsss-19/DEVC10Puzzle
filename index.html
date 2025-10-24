@@ -49,7 +49,7 @@
     }
 
     .piece {
-      background-image: url("https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80");
+      background-image: url("puzzle.png"); /* <-- image in same folder */
       background-size: 360px 360px;
       width: 100%;
       height: 100%;
@@ -81,7 +81,7 @@
       border-radius: 6px;
       cursor: pointer;
       font-weight: 600;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
       transition: background 0.3s;
     }
 
@@ -105,19 +105,22 @@
     .modal-content {
       background-color: #1e1e1e;
       color: #fff;
-      margin: 10% auto;
+      margin: 5% auto;
       padding: 20px;
       border: 2px solid #ffcb77;
       border-radius: 10px;
-      width: 80%;
-      max-width: 500px;
+      width: 90%;
+      max-width: 1000px;
       text-align: center;
       box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+      position: relative;
     }
 
     .close {
       color: #ffcb77;
-      float: right;
+      position: absolute;
+      right: 20px;
+      top: 10px;
       font-size: 24px;
       font-weight: bold;
       cursor: pointer;
@@ -125,6 +128,67 @@
 
     .close:hover {
       color: #ffe299;
+    }
+
+    .slides {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .slides.active {
+      display: flex;
+    }
+
+    .slide-image {
+      width: 500px;
+      height: 500px;
+      background-color: #333;
+      border-radius: 8px;
+      background-size: cover;
+      background-position: center;
+      flex-shrink: 0;
+    }
+
+    .slide-text {
+      text-align: left;
+      max-width: 400px;
+    }
+
+    .slide-text h3 {
+      margin: 0 0 10px;
+      color: #ffcb77;
+      font-size: 1.4em;
+    }
+
+    .slide-text p {
+      color: #ddd;
+      line-height: 1.5;
+      font-size: 1em;
+    }
+
+    .nav-btns {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .nav-btns button {
+      background-color: #ffcb77;
+      border: none;
+      color: #333;
+      font-weight: 600;
+      border-radius: 6px;
+      padding: 10px 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .nav-btns button:hover {
+      background-color: #ffe299;
     }
   </style>
 </head>
@@ -143,7 +207,52 @@
     <div class="modal-content">
       <span class="close">&times;</span>
       <h2>Development Complete!</h2>
-      <p>Placeholder text here — you can replace this with your final reflection, message, or explanation.</p>
+
+      <!-- Slides -->
+      <div class="slides active">
+        <div class="slide-image" style="background-image:url('slide1.png');"></div>
+        <div class="slide-text">
+          <h3>Education & Knowledge</h3>
+          <p>Education forms the backbone of national progress, equipping citizens with the skills and wisdom to build a better tomorrow.</p>
+        </div>
+      </div>
+
+      <div class="slides">
+        <div class="slide-image" style="background-image:url('slide2.png');"></div>
+        <div class="slide-text">
+          <h3>Health & Well-being</h3>
+          <p>A healthy nation is a productive nation. Access to quality healthcare ensures resilience and equity for all communities.</p>
+        </div>
+      </div>
+
+      <div class="slides">
+        <div class="slide-image" style="background-image:url('slide3.png');"></div>
+        <div class="slide-text">
+          <h3>Economic Growth</h3>
+          <p>Sustainable economic opportunities empower people, strengthen industries, and uplift communities nationwide.</p>
+        </div>
+      </div>
+
+      <div class="slides">
+        <div class="slide-image" style="background-image:url('slide4.png');"></div>
+        <div class="slide-text">
+          <h3>Environment & Sustainability</h3>
+          <p>Protecting natural resources and promoting green practices ensures that development remains sustainable and inclusive.</p>
+        </div>
+      </div>
+
+      <div class="slides">
+        <div class="slide-image" style="background-image:url('slide5.png');"></div>
+        <div class="slide-text">
+          <h3>Unity & Cooperation</h3>
+          <p>True progress thrives when every sector and citizen works hand in hand — united for a prosperous and just Philippines.</p>
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <button id="prevSlide">Previous</button>
+        <button id="nextSlide">Next</button>
+      </div>
     </div>
   </div>
 
@@ -154,6 +263,11 @@
     const modal = document.getElementById("completionModal");
     const closeModal = document.querySelector(".close");
 
+    const slides = document.querySelectorAll(".slides");
+    const nextSlide = document.getElementById("nextSlide");
+    const prevSlide = document.getElementById("prevSlide");
+
+    let currentSlide = 0;
     const gridSize = 3;
     let pieces = [];
 
@@ -170,7 +284,6 @@
           piece.dataset.correct = correctIndex;
           piece.dataset.current = correctIndex;
           piece.style.backgroundPosition = `${-col * 120}px ${-row * 120}px`;
-
           pieces.push(piece);
         }
       }
@@ -197,20 +310,16 @@
 
     function addDragAndDrop() {
       let dragged = null;
-
       pieces.forEach(piece => {
         piece.addEventListener("dragstart", () => {
           dragged = piece;
           setTimeout(() => piece.style.opacity = "0.3", 0);
         });
-
         piece.addEventListener("dragend", () => {
           piece.style.opacity = "1";
           dragged = null;
         });
-
         piece.addEventListener("dragover", e => e.preventDefault());
-
         piece.addEventListener("drop", () => {
           if (dragged && dragged !== piece) {
             const temp = dragged.dataset.current;
@@ -233,14 +342,20 @@
       }
     }
 
-    closeModal.addEventListener("click", () => {
-      modal.style.display = "none";
+    // Modal controls
+    closeModal.addEventListener("click", () => modal.style.display = "none");
+    window.addEventListener("click", e => { if (e.target === modal) modal.style.display = "none"; });
+
+    nextSlide.addEventListener("click", () => {
+      slides[currentSlide].classList.remove("active");
+      currentSlide = (currentSlide + 1) % slides.length;
+      slides[currentSlide].classList.add("active");
     });
 
-    window.addEventListener("click", (event) => {
-      if (event.target === modal) {
-        modal.style.display = "none";
-      }
+    prevSlide.addEventListener("click", () => {
+      slides[currentSlide].classList.remove("active");
+      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+      slides[currentSlide].classList.add("active");
     });
 
     shuffleBtn.addEventListener("click", shufflePieces);

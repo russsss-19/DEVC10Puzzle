@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Development Puzzle</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      background-color: #121212;
+      color: #fff;
+      height: 100vh;
+      margin: 0;
+      padding-top: 40px;
+    }
+
+    h1 {
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    p.description {
+      text-align: center;
+      max-width: 800px;
+      font-size: 1em;
+      line-height: 1.6;
+      color: #ddd;
+      margin-bottom: 30px;
+      padding: 0 20px;
+    }
+
+    #puzzle-container {
+      width: 360px;
+      height: 360px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 2px;
+      border: 5px solid #fff;
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+      position: relative;
+    }
+
+    .piece {
+      background-image: url("https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=400&q=80");
+      background-size: 360px 360px;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      border-radius: 4px;
+      transition: transform 0.2s ease;
+    }
+
+    .piece:active {
+      cursor: grabbing;
+      transform: scale(1.05);
+    }
+
+    #message {
+      margin-top: 20px;
+      font-size: 1.2em;
+      font-weight: 600;
+      text-align: center;
+      color: #fff;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      background-color: #ffcb77;
+      color: #333;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #ffe299;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-content {
+      background-color: #1e1e1e;
+      color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border: 2px solid #ffcb77;
+      border-radius: 10px;
+      width: 80%;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .close {
+      color: #ffcb77;
+      float: right;
+      font-size: 24px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #ffe299;
+    }
+  </style>
+</head>
+<body>
+  <h1>The Development Puzzle</h1>
+  <p class="description">
+    Our artefact, titled “The Development Puzzle,” represents how different aspects of progress must come together to form a prosperous Philippines. Each puzzle piece stands for a key element that contributes to the nation’s growth. Just like in a real puzzle, development becomes whole only when all pieces are connected and valued equally. Through this artefact, we emphasize that genuine progress is collective, inclusive, and sustained by cooperation. It is a reminder that every sector and individual plays an essential role in shaping a better future for all.
+  </p>
+
+  <div id="puzzle-container"></div>
+  <div id="message"></div>
+  <button id="shuffle-btn">Shuffle Pieces</button>
+
+  <!-- Modal -->
+  <div id="completionModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Development Complete!</h2>
+      <p>Placeholder text here — you can replace this with your final reflection, message, or explanation.</p>
+    </div>
+  </div>
+
+  <script>
+    const container = document.getElementById("puzzle-container");
+    const message = document.getElementById("message");
+    const shuffleBtn = document.getElementById("shuffle-btn");
+    const modal = document.getElementById("completionModal");
+    const closeModal = document.querySelector(".close");
+
+    const gridSize = 3;
+    let pieces = [];
+
+    function createPuzzle() {
+      container.innerHTML = "";
+      pieces = [];
+
+      for (let row = 0; row < gridSize; row++) {
+        for (let col = 0; col < gridSize; col++) {
+          const correctIndex = row * gridSize + col;
+          const piece = document.createElement("div");
+          piece.classList.add("piece");
+          piece.draggable = true;
+          piece.dataset.correct = correctIndex;
+          piece.dataset.current = correctIndex;
+          piece.style.backgroundPosition = `${-col * 120}px ${-row * 120}px`;
+
+          pieces.push(piece);
+        }
+      }
+
+      renderPieces();
+      shufflePieces();
+      addDragAndDrop();
+    }
+
+    function shufflePieces() {
+      for (let i = pieces.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pieces[i].dataset.current, pieces[j].dataset.current] = [pieces[j].dataset.current, pieces[i].dataset.current];
+      }
+      renderPieces();
+      message.textContent = "";
+    }
+
+    function renderPieces() {
+      container.innerHTML = "";
+      pieces.sort((a, b) => a.dataset.current - b.dataset.current);
+      pieces.forEach(p => container.appendChild(p));
+    }
+
+    function addDragAndDrop() {
+      let dragged = null;
+
+      pieces.forEach(piece => {
+        piece.addEventListener("dragstart", () => {
+          dragged = piece;
+          setTimeout(() => piece.style.opacity = "0.3", 0);
+        });
+
+        piece.addEventListener("dragend", () => {
+          piece.style.opacity = "1";
+          dragged = null;
+        });
+
+        piece.addEventListener("dragover", e => e.preventDefault());
+
+        piece.addEventListener("drop", () => {
+          if (dragged && dragged !== piece) {
+            const temp = dragged.dataset.current;
+            dragged.dataset.current = piece.dataset.current;
+            piece.dataset.current = temp;
+            renderPieces();
+            checkWin();
+          }
+        });
+      });
+    }
+
+    function checkWin() {
+      const solved = pieces.every(p => p.dataset.current === p.dataset.correct.toString());
+      if (solved) {
+        message.textContent = "Development Complete!";
+        modal.style.display = "block";
+      } else {
+        message.textContent = "";
+      }
+    }
+
+    closeModal.addEventListener("click", () => {
+      modal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+
+    shuffleBtn.addEventListener("click", shufflePieces);
+    createPuzzle();
+  </script>
+</body>
+</html>
